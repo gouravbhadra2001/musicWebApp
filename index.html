@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+            height: 100vh;
+            background: url("https://www.shutterstock.com/image-vector/colorful-music-background-600nw-364346705.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .disabled{
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .audio {
+            display: none;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            z-index: 5;
+            position: fixed;
+        }
+
+
+        .controls p {
+            margin: 0 10px;
+            padding: 5px 10px;
+        }
+        
+        .controls p img{
+            transform: scale(1.0);
+            transition: transform 0.3s ease-in-out;
+            cursor: pointer;
+        }
+        .controls p img:hover{
+            transform: scale(1.1);
+            transition: transform 0.3s ease-in-out;
+            cursor: pointer;
+        }        
+        ul {
+            list-style-type: none;
+            padding: 0;
+            z-index: 5;
+            margin-top: 100px;
+            max-height: 400px; 
+            border-radius: 10px;
+            overflow-y: scroll; 
+            padding-right: 10px;
+        }
+
+        ul::-webkit-scrollbar {
+            width: 5px; 
+        }
+
+        ul::-webkit-scrollbar-track {
+            background: transparent; 
+            margin-left: 10px;
+        }
+
+        ul::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        ul::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        li {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #dddddd43;
+            transition: background-color 0.3s ease;
+            position: relative;
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 5px;
+        }
+
+        li:hover, .song.active {
+            background-color: #dddddd9d;
+            border-radius: 10px;
+        }
+
+        li.active::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            
+            width: var(--progress-width, 0%);
+            height: 100%;
+            background-color: rgba(0, 0, 255, 0.17);
+            z-index: 1;
+            border-radius: 10px;
+        }
+
+        .songname{
+            position: fixed;
+            top: 70px;
+            color: wheat;
+        }
+        .file-input-label {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background-color: #005eff;
+            color: #fff;
+            font-size: 40px;
+            font-weight: 100;
+            height: 70px;
+            width: 70px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .file-input-label:hover {
+            background-color: #0056b3;
+        }
+
+        .files {
+            display: none;
+        }
+
+        #canvas {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -10;
+            background-color: #000000b6;
+           
+        }
+       
+        input[type="range"].slider-track {
+            border: none;
+            margin: 10px 0;
+            width: 100%;
+            height: fit-content;
+            padding: -5px;
+            overflow-x: hidden;
+            overflow-y: visible;
+            background-color: transparent;
+
+            border-radius: 10px;
+            box-shadow: rgba(130, 240, 223, 0.886) 0px 7px 29px 0px;
+
+            
+        }
+      
+
+        input[type="range"].slider-track::-moz-range-thumb {
+            box-shadow: none;
+            border: 2px solid rgb(128, 128, 128);
+            height: 5px;
+            width: 5px;
+            
+            
+        }
+
+        input[type="range"].slider-track::-moz-range-track {
+            width: var(--progress-width, 0);
+            height: 2px;
+            box-shadow: none;
+            background: blue;
+            border-radius: 0px;
+            border: 0px;
+            transition: width 0.5s ease-in-out;
+        }
+        .time{
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: -10px;
+        }
+        .time span{
+color: white;
+        }
+    </style>
+</head>
+<body>
+    <audio class="audio"></audio>
+    <div class="container">
+        <label for="file-input" class="file-input-label">+</label>
+        <input id="file-input" class="files" type="file" accept="audio/*" multiple>
+    </div>
+    
+    <div class="controls">
+        <p class="prev"><img src="./prev.png" height="50" width="50" alt="Prev" srcset=""></p>
+        <p class="playpause"><img src="./play.png" height="50" width="50" alt="Play"></p>
+        <p class="next"><img src="./next.png" height="50" width="50" alt="Next" srcset=""></p>
+    </div>
+    <p class="songname">Song Name</p>
+    <div style="width: 60%; margin-top: 100px;">
+        <div class="time"><span class="currentTime">0:00</span><span class="timeRemaining">0:00</span></div>
+        <input type="range" class="slider-track" id="seekBar" min="0" value="0" max="100" step="0.01"></input>
+    </div>
+    <ul>
+        <!-- Songs will be listed here -->
+    </ul>
+    <canvas id="canvas"></canvas>
+    <script src="./logic.js"></script>
+</body>
+</html>
